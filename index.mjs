@@ -2,7 +2,8 @@ import { env } from 'process'
 import express from 'express'
 import { randomBytes } from 'crypto'
 import { readFileSync, existsSync, writeFileSync } from 'fs'
-import { resolve,  } from 'path'
+import { resolve } from 'path'
+import { hostname } from 'os'
 
 function getServerID() {
   if ('SERVICE_ID' in env && env.SERVICE_ID.length > 0) {
@@ -30,7 +31,7 @@ function saveServerID(id) {
 
 
 const port = 'SERVICE_PORT' in env ? env.SERVICE_PORT : 8080
-const hostname = 'HOSTNAME' in env ? env.HOSTNAME : 'localhost'
+const hostName = hostname()
 const serverID = getServerID();
 saveServerID(serverID)
 
@@ -39,8 +40,8 @@ const server = express()
 let counter = 0
  
 server.get('/', function (req, res) {
-  res.send(`[${serverID}@${hostname}:${port}] Hit ${++counter} times`)
+  res.send(`[${serverID}@${hostName}:${port}] Hit ${++counter} times`)
 })
  
-console.log(`Service ${serverID} listening on ${hostname}:${port}`)
+console.log(`Service ${serverID} listening on ${hostName}:${port}`)
 server.listen(port)
